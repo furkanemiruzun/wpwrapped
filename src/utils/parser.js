@@ -88,7 +88,7 @@ const analyzeMessages = (messages) => {
         stats.userStats[msg.author].wordCount += words.length;
 
         words.forEach(word => {
-            const cleanWord = word.replace(/[^\w\s]/gi, ''); // Remove punctuation
+            const cleanWord = word.replace(/[^\p{L}\p{N}]/gu, ''); // Remove punctuation but keep any unicode letter/number
             if (cleanWord.length > 2 && !STOP_WORDS.has(cleanWord)) {
                 wordCounts[cleanWord] = (wordCounts[cleanWord] || 0) + 1;
             }
