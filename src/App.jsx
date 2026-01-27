@@ -70,7 +70,7 @@ function App() {
                 Analyze Another
               </button>
             )}
-            <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+            <a href="https://github.com/furkanemiruzun" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
               <Github size={20} />
             </a>
           </div>
