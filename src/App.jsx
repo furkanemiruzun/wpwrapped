@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, MessageCircle, FileText, ChevronRight, Github } from 'lucide-react';
+import { Upload, MessageCircle, FileText, ChevronRight, Github, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { GlassCard } from './components/ui/GlassCard';
 import Dashboard from './components/Dashboard';
 import { parseWhatsAppChat } from './utils/parser';
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'tr' : 'en';
+    i18n.changeLanguage(newLang);
+  };
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -28,7 +35,7 @@ function App() {
         setStats(data);
       } catch (error) {
         console.error("Parsing error", error);
-        alert("Could not parse file. Ensure it's a valid WhatsApp text export.");
+        alert(t('parsing_error_alert'));
       } finally {
         setLoading(false);
       }
@@ -61,15 +68,24 @@ function App() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Chat<span className="text-cta">Wrapp</span></h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {stats && (
               <button
                 onClick={reset}
                 className="text-sm text-muted hover:text-white transition-colors"
               >
-                Analyze Another
+                {t('analyze_another')}
               </button>
             )}
+
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-sm font-medium"
+            >
+              <Globe size={16} />
+              {i18n.language.toUpperCase()}
+            </button>
+
             <a href="https://github.com/furkanemiruzun" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
               <Github size={20} />
             </a>
@@ -87,15 +103,13 @@ function App() {
               className="max-w-4xl mx-auto text-center pt-10 md:pt-20"
             >
               <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-cta/30 bg-cta/10 text-cta text-sm font-medium animate-slide-up">
-                ✨ WhatsApp Analysis Reimagined
+                {t('hero_badge')}
               </div>
 
-              <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 pb-2 leading-tight">
-                Unlock insights from <br /> your conversations.
-              </h2>
+              <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50 pb-2 leading-tight" dangerouslySetInnerHTML={{ __html: t('hero_title') }} />
 
               <p className="text-xl text-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-                Visualize usage patterns, most discussed topics, sleep schedules, and top emojis with our premium analysis engine.
+                {t('hero_subtitle')}
               </p>
 
               {/* Upload Area */}
@@ -115,7 +129,7 @@ function App() {
                         <Upload className="w-10 h-10 mb-3 text-muted group-hover:text-cta transition-colors" />
                       )}
                       <p className="text-sm text-muted">
-                        {loading ? 'Crunching data...' : 'Drop _chat.txt or Click to Upload'}
+                        {loading ? t('crunching') : t('drop_text')}
                       </p>
                     </div>
                     <input
@@ -134,22 +148,22 @@ function App() {
                   <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 text-purple-400">
                     <FileText size={20} />
                   </div>
-                  <h3 className="font-semibold mb-2">100% Private</h3>
-                  <p className="text-sm text-muted">Analysis runs entirely in your browser. No data leaves your device.</p>
+                  <h3 className="font-semibold mb-2">{t('card_private_title')}</h3>
+                  <p className="text-sm text-muted">{t('card_private_desc')}</p>
                 </div>
                 <div className="p-4 border border-white/5 rounded-xl bg-white/5">
                   <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 text-blue-400">
                     <MessageCircle size={20} />
                   </div>
-                  <h3 className="font-semibold mb-2">Deep Insights</h3>
-                  <p className="text-sm text-muted">Discover who talks the most and your group's peak activity times.</p>
+                  <h3 className="font-semibold mb-2">{t('card_insights_title')}</h3>
+                  <p className="text-sm text-muted">{t('card_insights_desc')}</p>
                 </div>
                 <div className="p-4 border border-white/5 rounded-xl bg-white/5">
                   <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 text-green-400">
                     <ChevronRight size={20} />
                   </div>
-                  <h3 className="font-semibold mb-2">Instant Result</h3>
-                  <p className="text-sm text-muted">Drop your text file and get beautiful, shareable charts instantly.</p>
+                  <h3 className="font-semibold mb-2">{t('card_result_title')}</h3>
+                  <p className="text-sm text-muted">{t('card_result_desc')}</p>
                 </div>
               </div>
 
@@ -162,9 +176,9 @@ function App() {
               transition={{ duration: 0.5 }}
             >
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Analysis Report: <span className="text-cta font-mono text-lg font-normal ml-2">{fileName}</span></h2>
+                <h2 className="text-2xl font-bold">{t('report_title')} <span className="text-cta font-mono text-lg font-normal ml-2">{fileName}</span></h2>
                 <span className="text-sm text-muted bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                  Generated Now
+                  {t('generated_now')}
                 </span>
               </div>
               <Dashboard stats={stats} />

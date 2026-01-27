@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GlassCard } from './ui/GlassCard';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
@@ -25,6 +26,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function Dashboard({ stats }) {
+    const { t } = useTranslation();
+
     const timelineData = useMemo(() => {
         // Basic fix for timeline sorting if needed, usually file order is enough
         return stats.timeline;
@@ -47,7 +50,7 @@ export default function Dashboard({ stats }) {
                         <MessageSquare size={24} />
                     </div>
                     <div>
-                        <p className="text-muted text-sm">Total Messages</p>
+                        <p className="text-muted text-sm">{t('total_messages')}</p>
                         <h3 className="text-3xl font-bold">{stats.totalMessages.toLocaleString()}</h3>
                     </div>
                 </GlassCard>
@@ -57,7 +60,7 @@ export default function Dashboard({ stats }) {
                         <Users size={24} />
                     </div>
                     <div>
-                        <p className="text-muted text-sm">Active Users</p>
+                        <p className="text-muted text-sm">{t('active_users')}</p>
                         <h3 className="text-3xl font-bold">{stats.users.length}</h3>
                     </div>
                 </GlassCard>
@@ -67,7 +70,7 @@ export default function Dashboard({ stats }) {
                         <Calendar size={24} />
                     </div>
                     <div>
-                        <p className="text-muted text-sm">Total Days</p>
+                        <p className="text-muted text-sm">{t('total_days')}</p>
                         <h3 className="text-3xl font-bold">{stats.timeline.length}</h3>
                     </div>
                 </GlassCard>
@@ -77,7 +80,7 @@ export default function Dashboard({ stats }) {
             <GlassCard delay={0.4} className="h-[400px]">
                 <div className="flex items-center gap-2 mb-6">
                     <Calendar className="text-cta" size={20} />
-                    <h2 className="text-xl font-semibold">Message History</h2>
+                    <h2 className="text-xl font-semibold">{t('message_history')}</h2>
                 </div>
                 <div className="flex-1 w-full min-h-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -103,7 +106,7 @@ export default function Dashboard({ stats }) {
                 <GlassCard delay={0.5} className="h-[350px]">
                     <div className="flex items-center gap-2 mb-6">
                         <Clock className="text-blue-400" size={20} />
-                        <h2 className="text-xl font-semibold">Busiest Times of Day</h2>
+                        <h2 className="text-xl font-semibold">{t('busiest_times')}</h2>
                     </div>
                     <div className="flex-1 w-full min-h-0">
                         <ResponsiveContainer width="100%" height="100%">
@@ -122,7 +125,7 @@ export default function Dashboard({ stats }) {
                 <GlassCard delay={0.6} className="h-[350px]">
                     <div className="flex items-center gap-2 mb-6">
                         <Users className="text-purple-400" size={20} />
-                        <h2 className="text-xl font-semibold">Who Talks the Most?</h2>
+                        <h2 className="text-xl font-semibold">{t('who_talks_most')}</h2>
                     </div>
                     <div className="flex h-[80%]">
                         <ResponsiveContainer width="60%" height="100%">
@@ -161,7 +164,7 @@ export default function Dashboard({ stats }) {
                 <GlassCard delay={0.7} className="max-h-[500px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Type className="text-yellow-400" size={20} />
-                        <h2 className="text-xl font-semibold">Most Used Words</h2>
+                        <h2 className="text-xl font-semibold">{t('most_used_words')}</h2>
                     </div>
                     <div className="flex flex-wrap gap-2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
                         {stats.topWords.slice(0, 40).map((word, i) => (
@@ -180,7 +183,7 @@ export default function Dashboard({ stats }) {
                 <GlassCard delay={0.8} className="max-h-[500px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Smile className="text-pink-400" size={20} />
-                        <h2 className="text-xl font-semibold">Emoji Addiction</h2>
+                        <h2 className="text-xl font-semibold">{t('emoji_addiction')}</h2>
                     </div>
                     <div className="space-y-3 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
                         {stats.emojiStats.map((emoji, i) => (
@@ -198,7 +201,7 @@ export default function Dashboard({ stats }) {
                             </div>
                         ))}
                         {stats.emojiStats.length === 0 && (
-                            <p className="text-muted text-center py-10">No emojis found 😢</p>
+                            <p className="text-muted text-center py-10">{t('no_emojis')}</p>
                         )}
                     </div>
                 </GlassCard>
@@ -211,7 +214,7 @@ export default function Dashboard({ stats }) {
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cta to-emerald-700 flex items-center justify-center text-white shadow-lg">
                             <span className="text-xl">🌱</span>
                         </div>
-                        <h3 className="text-xl font-semibold text-white">How it Started (First 10)</h3>
+                        <h3 className="text-xl font-semibold text-white">{t('how_it_started')}</h3>
                     </div>
 
                     <div className="space-y-4 relative z-10 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
