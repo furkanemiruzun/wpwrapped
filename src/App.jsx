@@ -31,20 +31,32 @@ function App() {
     // Simulate slight delay for "crunching" animation feels
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const text = event.target.result;
-        const data = parseWhatsAppChat(text);
-        setStats(data);
-      } catch (error) {
-        console.error("Parsing error", error);
-        alert(t('parsing_error_alert'));
-      } finally {
-        setLoading(false);
+    try {
+      let text = '';
+      if (file.type === "application/zip" || file.name.endsWith(".zip")) {
+        const zip = new JSZip();
+        const contents = await zip.loadAsync(file);
+        const txtFiles = Object.keys(contents.files).filter(name => name.endsWith('.txt') && !name.startsWith('__MACOSX'));
+
+        if (txtFiles.length === 0) {
+          alert("No .txt file found in the zip!");
+          setLoading(false);
+          return;
+        }
+        // Use the first txt file found
+        text = await contents.files[txtFiles[0]].async("string");
+      } else {
+        text = await file.text();
       }
-    };
-    reader.readAsText(file);
+
+      const data = parseWhatsAppChat(text);
+      setStats(data);
+    } catch (error) {
+      console.error("Parsing error", error);
+      alert(t('parsing_error_alert') || "Error processing file");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reset = () => {
