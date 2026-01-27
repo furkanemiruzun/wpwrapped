@@ -15,7 +15,9 @@ const STOP_WORDS = new Set([
 ]);
 
 export const parseWhatsAppChat = (text) => {
-    const lines = text.split('\n');
+    // Remove BOM if present
+    const cleanText = text.replace(/^\uFEFF/, '');
+    const lines = cleanText.split(/\r?\n/);
     const messages = [];
 
     // Regex to match: [Date, Time] User: Message
