@@ -10,7 +10,7 @@ const STOP_WORDS = new Set([
     'dahil', 'be', 'medya', 'görüntü', 'omitted', 'media', 'attached', 'image', 'sticker', 'gif', 'audio', 'video',
     'bir', 've', 'ile', 'bu', 'da', 'de', 'ama', 'fakat', 'lakin', 'için', 'ben', 'sen', 'o', 'biz', 'siz', 'onlar',
     'ne', 'var', 'yok', 'mı', 'mi', 'mu', 'mü', 'diye', 'gibi', 'kadar', 'sonra', 'önce', 'şu', 'şey', 'belki', 'sanki',
-    'en', 'çok', 'daha', 'nasıl', 'neden', 'niye', 'acaba', 'eğer', 'ise', 'ki', 'yani', 'işte', 'böyle', 'öyle', 'hiç', 'edilmedi',
+    'en', 'çok', 'daha', 'nasıl', 'neden', 'niye', 'acaba', 'eğer', 'ise', 'ki', 'yani', 'işte', 'böyle', 'öyle', 'hiç', 'edilmedi', 'silindi',
     'image omitted', 'media omitted', 'medya dahil edilmedi', 'görüntü dahil edilmedi'
 ]);
 
