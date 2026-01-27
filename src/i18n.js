@@ -33,6 +33,7 @@ const resources = {
             "emoji_addiction": "Emoji Addiction",
             "no_emojis": "No emojis found 😢",
             "how_it_started": "How it Started (First 10)",
+            "developed_by": "Developed by",
         }
     },
     tr: {
@@ -65,6 +66,7 @@ const resources = {
             "emoji_addiction": "Emoji Bağımlılığı",
             "no_emojis": "Emoji bulunamadı 😢",
             "how_it_started": "Nasıl Başladı (İlk 10)",
+            "developed_by": "Furkan Emir Uzun tarafından geliştirildi",
         }
     }
 };

@@ -186,6 +186,13 @@ function App() {
           )}
         </AnimatePresence>
 
+        {/* Footer */}
+        <footer className="mt-20 text-center text-sm text-muted animate-fade-in">
+          <p>
+            {t('developed_by')} <a href="https://github.com/furkanemiruzun" target="_blank" rel="noopener noreferrer" className="text-cta hover:text-white transition-colors font-medium">Furkan Emir Uzun</a>
+          </p>
+        </footer>
+
       </div>
     </div>
   );
