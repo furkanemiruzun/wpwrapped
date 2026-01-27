@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, MessageCircle, FileText, ChevronRight, Github, Globe, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import JSZip from 'jszip';
 import { GlassCard } from './components/ui/GlassCard';
 import Dashboard from './components/Dashboard';
 import GuideSection from './components/GuideSection';
@@ -148,7 +149,7 @@ function App() {
                     </div>
                     <input
                       type="file"
-                      accept=".txt"
+                      accept=".txt, .zip, application/zip"
                       className="hidden"
                       onChange={handleFileUpload}
                       disabled={loading}
