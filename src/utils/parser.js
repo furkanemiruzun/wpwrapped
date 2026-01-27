@@ -7,7 +7,11 @@ const STOP_WORDS = new Set([
     'just', 'him', 'know', 'take', 'people', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then',
     'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well',
     'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'track', 'omitted', 'media', 'attached',
-    'image', 'sticker', 'gif', 'audio', 'video', 'pm', 'am', 'http', 'https', 'www', 'com', 'net', 'org', 'image omitted', 'media omitted'
+    'dahil', 'be', 'medya', 'görüntü', 'omitted', 'media', 'attached', 'image', 'sticker', 'gif', 'audio', 'video',
+    'bir', 've', 'ile', 'bu', 'da', 'de', 'ama', 'fakat', 'lakin', 'için', 'ben', 'sen', 'o', 'biz', 'siz', 'onlar',
+    'ne', 'var', 'yok', 'mı', 'mi', 'mu', 'mü', 'diye', 'gibi', 'kadar', 'sonra', 'önce', 'şu', 'şey', 'belki', 'sanki',
+    'en', 'çok', 'daha', 'nasıl', 'neden', 'niye', 'acaba', 'eğer', 'ise', 'ki', 'yani', 'işte', 'böyle', 'öyle', 'hiç',
+    'image omitted', 'media omitted', 'medya dahil edilmedi', 'görüntü dahil edilmedi'
 ]);
 
 export const parseWhatsAppChat = (text) => {
