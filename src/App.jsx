@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, MessageCircle, FileText, ChevronRight, Github, Globe } from 'lucide-react';
+import { Upload, MessageCircle, FileText, ChevronRight, Github, Globe, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { GlassCard } from './components/ui/GlassCard';
 import Dashboard from './components/Dashboard';
+import GuideSection from './components/GuideSection';
+import PrivacyModal from './components/PrivacyModal';
 import { parseWhatsAppChat } from './utils/parser';
 
 function App() {
@@ -11,6 +13,7 @@ function App() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'tr' : 'en';
@@ -50,6 +53,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-text selection:bg-cta/30 selection:text-white font-sans relative">
+      <AnimatePresence>
+        {showPrivacy && <PrivacyModal onClose={() => setShowPrivacy(false)} />}
+      </AnimatePresence>
 
       {/* Background Ambient Glows */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -77,6 +83,14 @@ function App() {
                 {t('analyze_another')}
               </button>
             )}
+
+            <button
+              onClick={() => setShowPrivacy(true)}
+              className="hidden md:flex items-center gap-2 px-3 py-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors text-sm font-medium text-muted hover:text-white"
+            >
+              <Shield size={16} />
+              {t('privacy_policy')}
+            </button>
 
             <button
               onClick={toggleLanguage}
@@ -167,6 +181,9 @@ function App() {
                 </div>
               </div>
 
+              {/* Guide Section */}
+              <GuideSection />
+
             </motion.div>
           ) : (
             <motion.div
@@ -188,6 +205,14 @@ function App() {
 
         {/* Footer */}
         <footer className="mt-20 text-center text-sm text-muted animate-fade-in">
+          <div className="flex justify-center md:hidden mb-4">
+            <button
+              onClick={() => setShowPrivacy(true)}
+              className="text-muted hover:text-white transition-colors"
+            >
+              {t('privacy_policy')}
+            </button>
+          </div>
           <p>
             {t('developed_by')} <a href="https://github.com/furkanemiruzun" target="_blank" rel="noopener noreferrer" className="text-cta hover:text-white transition-colors font-medium">Furkan Emir Uzun</a>
           </p>

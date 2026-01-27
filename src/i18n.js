@@ -34,6 +34,27 @@ const resources = {
             "no_emojis": "No emojis found 😢",
             "how_it_started": "How it Started (First 10)",
             "developed_by": "Developed by",
+
+            // New Content
+            "privacy_policy": "Privacy Policy",
+            "close": "Close",
+            "how_to_export": "How to Export Your Chat?",
+            "android_tab": "Android",
+            "ios_tab": "iOS",
+            "step_1": "1. Open the WhatsApp chat you want to analyze.",
+            "step_2_android": "2. Tap the three dots (⋮) > More > Export Chat.",
+            "step_2_ios": "2. Tap the contact name at the top > Export Chat.",
+            "step_3": "3. Choose 'Without Media'.",
+            "step_4": "4. Save the file or share it to your computer.",
+
+            "privacy_title": "Privacy & Security",
+            "privacy_intro": "Your data privacy is our top priority. Key points:",
+            "privacy_p1_title": "Local Processing",
+            "privacy_p1_desc": "Your file is processed entirely within your browser on your device.",
+            "privacy_p2_title": "No Servers",
+            "privacy_p2_desc": "We do not have a backend server. Your chat logs are never uploaded to the internet.",
+            "privacy_p3_title": "No Storage",
+            "privacy_p3_desc": "We don't verify, store, or view your personal messages. Once you refresh the page, all data is gone.",
         }
     },
     tr: {
@@ -66,7 +87,28 @@ const resources = {
             "emoji_addiction": "Emoji Bağımlılığı",
             "no_emojis": "Emoji bulunamadı 😢",
             "how_it_started": "Nasıl Başladı (İlk 10)",
-            "developed_by": "Furkan Emir Uzun tarafından geliştirildi",
+            "developed_by": "Furkan Emir Uzun tarafından geliştirildi. ",
+
+            // New Content TR
+            "privacy_policy": "Gizlilik Politikası",
+            "close": "Kapat",
+            "how_to_export": "Sohbet Geçmişi Nasıl Alınır?",
+            "android_tab": "Android",
+            "ios_tab": "iOS",
+            "step_1": "1. Analiz etmek istediğiniz WhatsApp sohbetini açın.",
+            "step_2_android": "2. Sağ üstteki üç noktaya (⋮) basın > Diğer > Sohbeti Dışa Aktar.",
+            "step_2_ios": "2. En üstteki kişi/grup adına dokunun > Sohbeti Dışa Aktar.",
+            "step_3": "3. 'Medyasız' seçeneğini işaretleyin.",
+            "step_4": "4. Dosyayı kaydedin veya kendinize mail atıp bilgisayara indirin.",
+
+            "privacy_title": "Gizlilik ve Güvenlik",
+            "privacy_intro": "Veri gizliliğiniz bizim için en önemli önceliktir. Temel ilkelerimiz:",
+            "privacy_p1_title": "Yerel İşleme",
+            "privacy_p1_desc": "Dosyanız tamamen cihazınızdaki tarayıcı içinde işlenir.",
+            "privacy_p2_title": "Sunucu Yok",
+            "privacy_p2_desc": "Arka uç sunucumuz yoktur. Sohbet kayıtlarınız asla internete yüklenmez.",
+            "privacy_p3_title": "Kayıt Tutulmaz",
+            "privacy_p3_desc": "Mesajlarınızı görmeyiz, saklamayız veya doğrulamayız. Sayfayı yenilediğinizde tüm veriler kaybolur.",
         }
     }
 };
