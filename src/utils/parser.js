@@ -146,5 +146,82 @@ const analyzeMessages = (messages) => {
         .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
         .map(([hour, count]) => ({ hour, count }));
 
+    // --- PERSONA ANALYSIS ---
+    stats.personas = {};
+    
+    // 1. Night Owl (Gece Kuşu): Most messages between 00:00 - 05:00
+    // 2. Early Bird (Erkenci Kuş): Most messages between 05:00 - 09:00
+    // 3. The Chatterbox (Çenebaz): Highest word count average per message
+    // 4. The Ghost (Hayalet): Lowest message count but present
+    // 5. Emoji Lover (Emoji Aşığı): Highest emoji usage
+    
+    const nightOwlHours = ['00', '01', '02', '03', '04', '05'];
+    const earlyBirdHours = ['05', '06', '07', '08', '09'];
+
+    stats.users.forEach(user => {
+        let nightMsgs = 0;
+        let morningMsgs = 0;
+        let totalWords = stats.userStats[user].wordCount;
+        let totalMsgs = stats.userStats[user].count;
+        let emojiCount = 0;
+
+        // Re-scan messages for this user to count specific stats (inefficient but accurate for MVP)
+        // Optimization: Could have done this in the main loop, but keeping logic clean here.
+        messages.forEach(msg => {
+            if (msg.author === user) {
+                const h = msg.time.split(/[:.]/)[0].padStart(2, '0');
+                if (nightOwlHours.includes(h)) nightMsgs++;
+                if (earlyBirdHours.includes(h)) morningMsgs++;
+                
+                const emojis = msg.content.match(emojiRegex);
+                if (emojis) emojiCount += emojis.length;
+            }
+        });
+
+        // Determine main persona
+        let persona = "The Chatterbox"; // Default
+        let description = "Her zaman söyleyecek bir sözü var.";
+        let icon = "💬";
+
+        // Logic (Simple Heuristics)
+        const nightRatio = nightMsgs / totalMsgs;
+        const morningRatio = morningMsgs / totalMsgs;
+        const avgWords = totalWords / totalMsgs;
+        const emojiRatio = emojiCount / totalMsgs;
+
+        if (nightRatio > 0.2) {
+            persona = "Gece Kuşu 🦉";
+            description = "Geceleri yaşıyor, güneş doğarken uyuyor.";
+            icon = "🦉";
+        } else if (morningRatio > 0.15) {
+            persona = "Erkenci Kuş ☀️";
+            description = "Güne enerjik başlıyor, sabah mesajları ondan sorulur.";
+            icon = "☀️";
+        } else if (emojiRatio > 1.5) {
+            persona = "Emoji Aşığı 😍";
+            description = "Kelimeler yetersiz kaldığında emojiler konuşur.";
+            icon = "😍";
+        } else if (avgWords > 10) {
+            persona = "Filozof 📜";
+            description = "Uzun uzun anlatmayı seviyor, kısa cevaplar ona göre değil.";
+            icon = "📜";
+        } else if (avgWords < 3) {
+            persona = "Hızlı Silahşör ⚡";
+            description = "Kısa, öz ve hızlı. Ok, tmm, aynen.";
+            icon = "⚡";
+        }
+
+        stats.personas[user] = {
+            title: persona,
+            description: description,
+            icon: icon,
+            stats: {
+                nightRatio,
+                avgWords,
+                emojiRatio
+            }
+        };
+    });
+
     return stats;
 };

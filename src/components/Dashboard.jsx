@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GlassCard } from './ui/GlassCard';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
     LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, CartesianGrid
 } from 'recharts';
-import { MessageSquare, Users, Calendar, Clock, Smile, Type } from 'lucide-react';
+import { MessageSquare, Users, Calendar, Clock, Smile, Type, ChevronLeft, ChevronRight } from 'lucide-react';
+import PersonaCard from './PersonaCard';
 
 const COLORS = ['#22C55E', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
@@ -27,9 +29,21 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard({ stats }) {
     const { t } = useTranslation();
+    const [currentPersonaIndex, setCurrentPersonaIndex] = useState(0);
+
+    const personas = useMemo(() => {
+        return stats.personas ? Object.entries(stats.personas) : [];
+    }, [stats.personas]);
+
+    const nextPersona = () => {
+        setCurrentPersonaIndex((prev) => (prev + 1) % personas.length);
+    };
+
+    const prevPersona = () => {
+        setCurrentPersonaIndex((prev) => (prev - 1 + personas.length) % personas.length);
+    };
 
     const timelineData = useMemo(() => {
-        // Basic fix for timeline sorting if needed, usually file order is enough
         return stats.timeline;
     }, [stats.timeline]);
 
@@ -42,6 +56,82 @@ export default function Dashboard({ stats }) {
 
     return (
         <div className="space-y-6 animate-fade-in pb-20">
+
+            {/* TOP SECTION: PERSONA & HOURLY ACTIVITY */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* LEFT: PERSONA CARDS SLIDER */}
+                {personas.length > 0 && (
+                    <div className="relative w-full group h-[400px]">
+                        <div className="overflow-hidden rounded-2xl h-full">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentPersonaIndex}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="h-full"
+                                >
+                                    <PersonaCard 
+                                        user={personas[currentPersonaIndex][0]} 
+                                        data={personas[currentPersonaIndex][1]} 
+                                    />
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Navigation Buttons */}
+                        {personas.length > 1 && (
+                            <>
+                                <button 
+                                    onClick={prevPersona}
+                                    className="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button 
+                                    onClick={nextPersona}
+                                    className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                                
+                                {/* Dots Indicator */}
+                                <div className="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
+                                    {personas.map((_, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setCurrentPersonaIndex(idx)}
+                                            className={`w-2 h-2 rounded-full transition-all shadow-sm ${idx === currentPersonaIndex ? 'bg-cta w-4' : 'bg-white/30'}`}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
+
+                {/* RIGHT: HOURLY ACTIVITY */}
+                <GlassCard delay={0.5} className="h-[400px]">
+                    <div className="flex items-center gap-2 mb-6">
+                        <Clock className="text-blue-400" size={20} />
+                        <h2 className="text-xl font-semibold">{t('busiest_times')}</h2>
+                    </div>
+                    <div className="flex-1 w-full min-h-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={hourlyData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                <XAxis dataKey="hour" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                                <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff05' }} />
+                                <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </GlassCard>
+
+            </div>
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -76,7 +166,7 @@ export default function Dashboard({ stats }) {
                 </GlassCard>
             </div>
 
-            {/* Main Activity Chart */}
+            {/* Main Activity Chart (Timeline) */}
             <GlassCard delay={0.4} className="h-[400px]">
                 <div className="flex items-center gap-2 mb-6">
                     <Calendar className="text-cta" size={20} />
@@ -102,26 +192,8 @@ export default function Dashboard({ stats }) {
             </GlassCard>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Hourly Activity */}
-                <GlassCard delay={0.5} className="h-[350px]">
-                    <div className="flex items-center gap-2 mb-6">
-                        <Clock className="text-blue-400" size={20} />
-                        <h2 className="text-xl font-semibold">{t('busiest_times')}</h2>
-                    </div>
-                    <div className="flex-1 w-full min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={hourlyData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                                <XAxis dataKey="hour" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                                <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff05' }} />
-                                <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </GlassCard>
-
-                {/* User Distribution */}
+                
+                {/* User Distribution (Pie Chart) */}
                 <GlassCard delay={0.6} className="h-[350px]">
                     <div className="flex items-center gap-2 mb-6">
                         <Users className="text-purple-400" size={20} />
@@ -157,16 +229,14 @@ export default function Dashboard({ stats }) {
                         </div>
                     </div>
                 </GlassCard>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Top Words */}
-                <GlassCard delay={0.7} className="max-h-[500px] overflow-hidden">
+                <GlassCard delay={0.7} className="h-[350px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Type className="text-yellow-400" size={20} />
                         <h2 className="text-xl font-semibold">{t('most_used_words')}</h2>
                     </div>
-                    <div className="flex flex-wrap gap-2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                    <div className="flex flex-wrap gap-2 overflow-y-auto max-h-[250px] pr-2 custom-scrollbar">
                         {stats.topWords.slice(0, 40).map((word, i) => (
                             <span
                                 key={i}
@@ -178,9 +248,12 @@ export default function Dashboard({ stats }) {
                         ))}
                     </div>
                 </GlassCard>
+            </div>
 
-                {/* Top Emojis */}
-                <GlassCard delay={0.8} className="max-h-[500px] overflow-hidden">
+            {/* Top Emojis & First Messages Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                 {/* Top Emojis */}
+                 <GlassCard delay={0.8} className="max-h-[500px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Smile className="text-pink-400" size={20} />
                         <h2 className="text-xl font-semibold">{t('emoji_addiction')}</h2>
@@ -205,31 +278,31 @@ export default function Dashboard({ stats }) {
                         )}
                     </div>
                 </GlassCard>
-            </div>
 
-            {/* First Messages */}
-            {stats.firstMessages && stats.firstMessages.length > 0 && (
-                <GlassCard delay={0.9} className="relative overflow-hidden">
-                    <div className="flex items-center gap-3 mb-6 relative z-10">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cta to-emerald-700 flex items-center justify-center text-white shadow-lg">
-                            <span className="text-xl">🌱</span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-white">{t('how_it_started')}</h3>
-                    </div>
-
-                    <div className="space-y-4 relative z-10 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                        {stats.firstMessages.map((msg, i) => (
-                            <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                <div className="flex items-center justify-between">
-                                    <span className="font-medium text-cta text-sm">{msg.author}</span>
-                                    <span className="text-xs text-muted">{msg.date} {msg.time}</span>
-                                </div>
-                                <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                {/* First Messages */}
+                {stats.firstMessages && stats.firstMessages.length > 0 && (
+                    <GlassCard delay={0.9} className="relative overflow-hidden max-h-[500px]">
+                        <div className="flex items-center gap-3 mb-6 relative z-10">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cta to-emerald-700 flex items-center justify-center text-white shadow-lg">
+                                <span className="text-xl">🌱</span>
                             </div>
-                        ))}
-                    </div>
-                </GlassCard>
-            )}
+                            <h3 className="text-xl font-semibold text-white">{t('how_it_started')}</h3>
+                        </div>
+
+                        <div className="space-y-4 relative z-10 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                            {stats.firstMessages.map((msg, i) => (
+                                <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-medium text-cta text-sm">{msg.author}</span>
+                                        <span className="text-xs text-muted">{msg.date} {msg.time}</span>
+                                    </div>
+                                    <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </GlassCard>
+                )}
+            </div>
         </div>
     );
 }
