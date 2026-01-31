@@ -131,6 +131,7 @@
 
   .animate-tilt {
     animation: tilt 10s infinite linear;
+    will-change: transform;
   }
 }
 

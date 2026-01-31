@@ -97,6 +97,7 @@ const resources = {
             "tooltip_language": "Change Language",
             "tooltip_privacy": "Privacy Policy",
             "tooltip_contact": "Send us an email",
+            "tooltip_download_app": "Download Android App",
 
             "card_no_login_title": "No Login Required",
             "card_no_login_desc": "Just drag, drop, and explore. No sign-ups, no hidden fees.",
@@ -200,6 +201,7 @@ const resources = {
             "tooltip_language": "Dili Değiştir",
             "tooltip_privacy": "Gizlilik Politikası",
             "tooltip_contact": "Bize e-posta gönderin",
+            "tooltip_download_app": "Android Uygulamasını İndir",
 
             "card_no_login_title": "Giriş Yapmak Yok",
             "card_no_login_desc": "Sadece sürükle ve bırak. Üyelik yok, gizli ücret yok.",

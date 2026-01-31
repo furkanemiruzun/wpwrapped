@@ -161,6 +161,16 @@ function App() {
               </div>
             </button>
 
+
+
+            {/* Android APK Download */}
+            <a href="./chatwrapp.apk" download className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full hover:bg-emerald-500/20 transition-colors text-emerald-400 group relative" aria-label={t('tooltip_download_app')}>
+              <Download size={18} />
+              <div className="absolute top-full mt-2 right-0 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 pointer-events-none z-50">
+                {t('tooltip_download_app')}
+              </div>
+            </a>
+
             {/* GitHub Link */}
             <a href="https://github.com/furkanemiruzun/wpwrapped" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-white/5 border border-white/5 rounded-full hover:bg-white/10 transition-colors text-slate-300 group relative" aria-label="GitHub">
               <Github size={18} />
