@@ -148,13 +148,13 @@ const analyzeMessages = (messages) => {
 
     // --- PERSONA ANALYSIS ---
     stats.personas = {};
-    
+
     // 1. Night Owl (Gece Kuşu): Most messages between 00:00 - 05:00
     // 2. Early Bird (Erkenci Kuş): Most messages between 05:00 - 09:00
     // 3. The Chatterbox (Çenebaz): Highest word count average per message
     // 4. The Ghost (Hayalet): Lowest message count but present
     // 5. Emoji Lover (Emoji Aşığı): Highest emoji usage
-    
+
     const nightOwlHours = ['00', '01', '02', '03', '04', '05'];
     const earlyBirdHours = ['05', '06', '07', '08', '09'];
 
@@ -172,15 +172,15 @@ const analyzeMessages = (messages) => {
                 const h = msg.time.split(/[:.]/)[0].padStart(2, '0');
                 if (nightOwlHours.includes(h)) nightMsgs++;
                 if (earlyBirdHours.includes(h)) morningMsgs++;
-                
+
                 const emojis = msg.content.match(emojiRegex);
                 if (emojis) emojiCount += emojis.length;
             }
         });
 
         // Determine main persona
-        let persona = "The Chatterbox"; // Default
-        let description = "Her zaman söyleyecek bir sözü var.";
+        let persona = "persona_chatterbox_title"; // Default key
+        let description = "persona_chatterbox_desc"; // Default key
         let icon = "💬";
 
         // Logic (Simple Heuristics)
@@ -190,24 +190,24 @@ const analyzeMessages = (messages) => {
         const emojiRatio = emojiCount / totalMsgs;
 
         if (nightRatio > 0.2) {
-            persona = "Gece Kuşu 🦉";
-            description = "Geceleri yaşıyor, güneş doğarken uyuyor.";
+            persona = "persona_night_owl_title";
+            description = "persona_night_owl_desc";
             icon = "🦉";
         } else if (morningRatio > 0.15) {
-            persona = "Erkenci Kuş ☀️";
-            description = "Güne enerjik başlıyor, sabah mesajları ondan sorulur.";
+            persona = "persona_early_bird_title";
+            description = "persona_early_bird_desc";
             icon = "☀️";
         } else if (emojiRatio > 1.5) {
-            persona = "Emoji Aşığı 😍";
-            description = "Kelimeler yetersiz kaldığında emojiler konuşur.";
+            persona = "persona_emoji_lover_title";
+            description = "persona_emoji_lover_desc";
             icon = "😍";
         } else if (avgWords > 10) {
-            persona = "Filozof 📜";
-            description = "Uzun uzun anlatmayı seviyor, kısa cevaplar ona göre değil.";
+            persona = "persona_philosopher_title";
+            description = "persona_philosopher_desc";
             icon = "📜";
         } else if (avgWords < 3) {
-            persona = "Hızlı Silahşör ⚡";
-            description = "Kısa, öz ve hızlı. Ok, tmm, aynen.";
+            persona = "persona_quick_draw_title";
+            description = "persona_quick_draw_desc";
             icon = "⚡";
         }
 
@@ -223,5 +223,148 @@ const analyzeMessages = (messages) => {
         };
     });
 
+    // --- NEW METRICS ---
+    stats.responseTimes = calculateResponseTimes(messages, stats.users);
+    stats.conversationStarters = calculateConversationStarters(messages, stats.users);
+    stats.dailyActivity = calculateDailyActivity(messages);
+
     return stats;
+};
+
+const calculateResponseTimes = (messages, users) => {
+    if (messages.length < 2) return [];
+
+    let responseStats = {};
+    users.forEach(u => responseStats[u] = { totalTime: 0, count: 0 });
+
+    const parseDateTime = (d, t) => {
+        try {
+            const parts = d.split(/[\/\-\.]/);
+            // Handle different date formats if needed, assuming DD/MM/YYYY mostly
+            // If parts[0] is year (YYYY-MM-DD)
+            let day, month, year;
+            if (parts[0].length === 4) {
+                year = parts[0]; month = parts[1]; day = parts[2];
+            } else {
+                day = parts[0]; month = parts[1]; year = parts[2];
+            }
+
+            const tParts = t.split(/[:\.]/);
+            const hour = tParts[0];
+            const minute = tParts[1];
+
+            return new Date(year, month - 1, day, hour, minute);
+        } catch (e) {
+            return null;
+        }
+    };
+
+    for (let i = 0; i < messages.length - 1; i++) {
+        const curr = messages[i];
+        const next = messages[i + 1];
+
+        if (curr.author !== next.author && curr.author && next.author) {
+            const t1 = parseDateTime(curr.date, curr.time);
+            const t2 = parseDateTime(next.date, next.time);
+
+            if (t1 && t2) {
+                const diffMs = t2 - t1;
+                // legitimate response window: > 0 and < 6 hours
+                if (diffMs > 0 && diffMs < 6 * 60 * 60 * 1000) {
+                    if (!responseStats[next.author]) responseStats[next.author] = { totalTime: 0, count: 0 };
+                    responseStats[next.author].totalTime += diffMs;
+                    responseStats[next.author].count++;
+                }
+            }
+        }
+    }
+
+    return Object.entries(responseStats)
+        .map(([user, data]) => ({
+            user,
+            avgTimeMinutes: data.count > 0 ? (data.totalTime / data.count / 60000) : 0,
+            count: data.count
+        }))
+        .sort((a, b) => a.avgTimeMinutes - b.avgTimeMinutes);
+};
+
+const calculateConversationStarters = (messages, users) => {
+    if (messages.length < 2) return [];
+
+    let starterCounts = {};
+    users.forEach(u => starterCounts[u] = 0);
+
+    const parseDateTime = (d, t) => {
+        try {
+            const parts = d.split(/[\/\-\.]/);
+            let day, month, year;
+            if (parts[0].length === 4) {
+                year = parts[0]; month = parts[1]; day = parts[2];
+            } else {
+                day = parts[0]; month = parts[1]; year = parts[2];
+            }
+            const tParts = t.split(/[:\.]/);
+            return new Date(year, month - 1, day, tParts[0], tParts[1]);
+        } catch (e) { return null; }
+    };
+
+    if (messages[0].author) starterCounts[messages[0].author] = (starterCounts[messages[0].author] || 0) + 1;
+
+    for (let i = 0; i < messages.length - 1; i++) {
+        const curr = messages[i];
+        const next = messages[i + 1];
+
+        const t1 = parseDateTime(curr.date, curr.time);
+        const t2 = parseDateTime(next.date, next.time);
+
+        if (t1 && t2) {
+            const diffMs = t2 - t1;
+            if (diffMs > 6 * 60 * 60 * 1000) { // 6 hours
+                if (next.author) {
+                    starterCounts[next.author] = (starterCounts[next.author] || 0) + 1;
+                }
+            }
+        }
+    }
+
+    return Object.entries(starterCounts)
+        .map(([user, count]) => ({ user, count }))
+        .sort((a, b) => b.count - a.count);
+};
+
+const calculateDailyActivity = (messages) => {
+    const activity = {}; // 'YYYY-MM-DD': count
+
+    const parseDateKey = (d) => {
+        try {
+            const parts = d.split(/[\/\-\.]/);
+            let day, month, year;
+            if (parts[0].length === 4) {
+                year = parts[0]; month = parts[1]; day = parts[2];
+            } else {
+                day = parts[0]; month = parts[1]; year = parts[2];
+            }
+            // ensure YYYY-MM-DD format
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        } catch (e) { return null; }
+    };
+
+    messages.forEach(msg => {
+        const key = parseDateKey(msg.date);
+        if (key) {
+            activity[key] = (activity[key] || 0) + 1;
+        }
+    });
+
+    // Convert to array
+    const activityArray = Object.entries(activity).map(([date, count]) => ({ date, count }));
+
+    // Calculate levels (0-4) for heatmap
+    // Find max to normalize
+    const maxCount = Math.max(...activityArray.map(a => a.count), 1);
+
+    return activityArray.map(a => ({
+        ...a,
+        level: Math.ceil((a.count / maxCount) * 4) // 0 is empty, 1-4 are levels
+    })).sort((a, b) => new Date(a.date) - new Date(b.date));
 };

@@ -8,6 +8,9 @@ import {
 } from 'recharts';
 import { MessageSquare, Users, Calendar, Clock, Smile, Type, ChevronLeft, ChevronRight } from 'lucide-react';
 import PersonaCard from './PersonaCard';
+import ResponseTimeChart from './ResponseTimeChart';
+import ConversationStarters from './ConversationStarters';
+import ActivityHeatmap from './ActivityHeatmap';
 
 const COLORS = ['#22C55E', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
@@ -59,11 +62,11 @@ export default function Dashboard({ stats }) {
 
             {/* TOP SECTION: PERSONA & HOURLY ACTIVITY */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
+
                 {/* LEFT: PERSONA CARDS SLIDER */}
                 {personas.length > 0 && (
-                    <div className="relative w-full group h-[400px]">
-                        <div className="overflow-hidden rounded-2xl h-full">
+                    <GlassCard className="relative w-full group h-[400px] overflow-hidden">
+                        <div className="h-full">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentPersonaIndex}
@@ -73,9 +76,9 @@ export default function Dashboard({ stats }) {
                                     transition={{ duration: 0.3 }}
                                     className="h-full"
                                 >
-                                    <PersonaCard 
-                                        user={personas[currentPersonaIndex][0]} 
-                                        data={personas[currentPersonaIndex][1]} 
+                                    <PersonaCard
+                                        user={personas[currentPersonaIndex][0]}
+                                        data={personas[currentPersonaIndex][1]}
                                     />
                                 </motion.div>
                             </AnimatePresence>
@@ -84,19 +87,19 @@ export default function Dashboard({ stats }) {
                         {/* Navigation Buttons */}
                         {personas.length > 1 && (
                             <>
-                                <button 
+                                <button
                                     onClick={prevPersona}
                                     className="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
                                 >
                                     <ChevronLeft size={24} />
                                 </button>
-                                <button 
+                                <button
                                     onClick={nextPersona}
                                     className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
                                 >
                                     <ChevronRight size={24} />
                                 </button>
-                                
+
                                 {/* Dots Indicator */}
                                 <div className="absolute bottom-4 left-0 w-full flex justify-center gap-2 z-10">
                                     {personas.map((_, idx) => (
@@ -109,14 +112,16 @@ export default function Dashboard({ stats }) {
                                 </div>
                             </>
                         )}
-                    </div>
+                    </GlassCard>
                 )}
 
                 {/* RIGHT: HOURLY ACTIVITY */}
                 <GlassCard delay={0.5} className="h-[400px]">
                     <div className="flex items-center gap-2 mb-6">
                         <Clock className="text-blue-400" size={20} />
-                        <h2 className="text-xl font-semibold">{t('busiest_times')}</h2>
+                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
+                            {t('busiest_times')}
+                        </h2>
                     </div>
                     <div className="flex-1 w-full min-h-0">
                         <ResponsiveContainer width="100%" height="100%">
@@ -125,7 +130,7 @@ export default function Dashboard({ stats }) {
                                 <XAxis dataKey="hour" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                                 <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                                 <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff05' }} />
-                                <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="count" name={t('message_count')} fill="#3B82F6" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -135,33 +140,69 @@ export default function Dashboard({ stats }) {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <GlassCard delay={0.1} className="flex items-center gap-4">
-                    <div className="p-3 bg-cta/20 rounded-xl text-cta">
-                        <MessageSquare size={24} />
-                    </div>
-                    <div>
-                        <p className="text-muted text-sm">{t('total_messages')}</p>
-                        <h3 className="text-3xl font-bold">{stats.totalMessages.toLocaleString()}</h3>
+                {/* Total Messages */}
+                <GlassCard delay={0.1} className="relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] -mr-16 -mt-16 pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500" />
+
+                    <div className="flex flex-col h-full justify-between">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="p-3 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] group-hover:scale-110 transition-transform duration-300">
+                                <MessageSquare size={28} className="text-emerald-400" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 mb-1">
+                                {stats.totalMessages.toLocaleString()}
+                            </h3>
+                            <p className="text-sm font-medium text-emerald-100/60 uppercase tracking-widest pl-1">
+                                {t('total_messages')}
+                            </p>
+                        </div>
                     </div>
                 </GlassCard>
 
-                <GlassCard delay={0.2} className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
-                        <Users size={24} />
-                    </div>
-                    <div>
-                        <p className="text-muted text-sm">{t('active_users')}</p>
-                        <h3 className="text-3xl font-bold">{stats.users.length}</h3>
+                {/* Active Users */}
+                <GlassCard delay={0.2} className="relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[40px] -mr-16 -mt-16 pointer-events-none group-hover:bg-blue-500/20 transition-all duration-500" />
+
+                    <div className="flex flex-col h-full justify-between">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="p-3 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-2xl border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] group-hover:scale-110 transition-transform duration-300">
+                                <Users size={28} className="text-blue-400" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-violet-300 mb-1">
+                                {stats.users.length}
+                            </h3>
+                            <p className="text-sm font-medium text-blue-100/60 uppercase tracking-widest pl-1">
+                                {t('active_users')}
+                            </p>
+                        </div>
                     </div>
                 </GlassCard>
 
-                <GlassCard delay={0.3} className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-500/20 rounded-xl text-purple-400">
-                        <Calendar size={24} />
-                    </div>
-                    <div>
-                        <p className="text-muted text-sm">{t('total_days')}</p>
-                        <h3 className="text-3xl font-bold">{stats.timeline.length}</h3>
+                {/* Total Days */}
+                <GlassCard delay={0.3} className="relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[40px] -mr-16 -mt-16 pointer-events-none group-hover:bg-purple-500/20 transition-all duration-500" />
+
+                    <div className="flex flex-col h-full justify-between">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="p-3 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.15)] group-hover:scale-110 transition-transform duration-300">
+                                <Calendar size={28} className="text-purple-400" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-300 to-pink-300 mb-1">
+                                {stats.timeline.length}
+                            </h3>
+                            <p className="text-sm font-medium text-purple-100/60 uppercase tracking-widest pl-1">
+                                {t('total_days')}
+                            </p>
+                        </div>
                     </div>
                 </GlassCard>
             </div>
@@ -170,7 +211,9 @@ export default function Dashboard({ stats }) {
             <GlassCard delay={0.4} className="h-[400px]">
                 <div className="flex items-center gap-2 mb-6">
                     <Calendar className="text-cta" size={20} />
-                    <h2 className="text-xl font-semibold">{t('message_history')}</h2>
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cta via-emerald-300 to-teal-400">
+                        {t('message_history')}
+                    </h2>
                 </div>
                 <div className="flex-1 w-full min-h-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -185,22 +228,24 @@ export default function Dashboard({ stats }) {
                             <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} minTickGap={50} />
                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                             <RechartsTooltip content={<CustomTooltip />} />
-                            <Area type="monotone" dataKey="count" stroke="#22C55E" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
+                            <Area type="monotone" dataKey="count" name={t('message_count')} stroke="#22C55E" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
             </GlassCard>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
+
                 {/* User Distribution (Pie Chart) */}
                 <GlassCard delay={0.6} className="h-[350px]">
                     <div className="flex items-center gap-2 mb-6">
                         <Users className="text-purple-400" size={20} />
-                        <h2 className="text-xl font-semibold">{t('who_talks_most')}</h2>
+                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-300 to-pink-400">
+                            {t('who_talks_most')}
+                        </h2>
                     </div>
-                    <div className="flex h-[80%]">
-                        <ResponsiveContainer width="60%" height="100%">
+                    <div className="flex flex-col md:flex-row h-full md:h-[80%] gap-4 md:gap-0">
+                        <ResponsiveContainer width="100%" height={200} className="md:w-[60%] md:h-full min-h-[200px]">
                             <PieChart>
                                 <Pie
                                     data={userPieData}
@@ -218,12 +263,12 @@ export default function Dashboard({ stats }) {
                                 <RechartsTooltip content={<CustomTooltip />} />
                             </PieChart>
                         </ResponsiveContainer>
-                        <div className="flex flex-col justify-center gap-2 text-sm w-[40%]">
+                        <div className="flex flex-col justify-center gap-2 text-sm w-full md:w-[40%] pl-2 md:pl-0">
                             {userPieData.map((entry, index) => (
                                 <div key={index} className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                                    <span className="truncate">{entry.name}</span>
-                                    <span className="text-muted ml-auto">{(entry.value / stats.totalMessages * 100).toFixed(0)}%</span>
+                                    <span className="truncate flex-1">{entry.name}</span>
+                                    <span className="text-muted">{(entry.value / stats.totalMessages * 100).toFixed(0)}%</span>
                                 </div>
                             ))}
                         </div>
@@ -234,7 +279,9 @@ export default function Dashboard({ stats }) {
                 <GlassCard delay={0.7} className="h-[350px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Type className="text-yellow-400" size={20} />
-                        <h2 className="text-xl font-semibold">{t('most_used_words')}</h2>
+                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-300 to-orange-400">
+                            {t('most_used_words')}
+                        </h2>
                     </div>
                     <div className="flex flex-wrap gap-2 overflow-y-auto max-h-[250px] pr-2 custom-scrollbar">
                         {stats.topWords.slice(0, 40).map((word, i) => (
@@ -252,11 +299,13 @@ export default function Dashboard({ stats }) {
 
             {/* Top Emojis & First Messages Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                 {/* Top Emojis */}
-                 <GlassCard delay={0.8} className="max-h-[500px] overflow-hidden">
+                {/* Top Emojis */}
+                <GlassCard delay={0.8} className="max-h-[500px] overflow-hidden">
                     <div className="flex items-center gap-2 mb-6">
                         <Smile className="text-pink-400" size={20} />
-                        <h2 className="text-xl font-semibold">{t('emoji_addiction')}</h2>
+                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-rose-300 to-red-400">
+                            {t('emoji_addiction')}
+                        </h2>
                     </div>
                     <div className="space-y-3 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
                         {stats.emojiStats.map((emoji, i) => (
@@ -286,7 +335,9 @@ export default function Dashboard({ stats }) {
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cta to-emerald-700 flex items-center justify-center text-white shadow-lg">
                                 <span className="text-xl">🌱</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-white">{t('how_it_started')}</h3>
+                            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-emerald-300 to-teal-200">
+                                {t('how_it_started')}
+                            </h3>
                         </div>
 
                         <div className="space-y-4 relative z-10 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
@@ -302,6 +353,19 @@ export default function Dashboard({ stats }) {
                         </div>
                     </GlassCard>
                 )}
+            </div>
+
+            {/* NEW METRICS GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-1">
+                    <ResponseTimeChart data={stats.responseTimes} />
+                </div>
+                <div className="lg:col-span-1">
+                    <ConversationStarters data={stats.conversationStarters} />
+                </div>
+                <div className="lg:col-span-1 md:col-span-2">
+                    <ActivityHeatmap data={stats.dailyActivity} />
+                </div>
             </div>
         </div>
     );
