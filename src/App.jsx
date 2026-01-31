@@ -113,7 +113,7 @@ function App() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {stats && (
               <div className="flex items-center gap-2">
                 <button onClick={downloadImage} className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-full transition-all text-sm font-medium">
@@ -127,10 +127,12 @@ function App() {
             )}
 
             {/* How to Export Button */}
-            <button onClick={scrollToGuide} className="group flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all hidden md:flex">
-              <span>{t('how_to_export')}</span>
-              <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity -ml-1 text-emerald-400" />
-            </button>
+            {!stats && (
+              <button onClick={scrollToGuide} className="group flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-all hidden md:flex">
+                <span>{t('how_to_export')}</span>
+                <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity -ml-1 text-emerald-400" />
+              </button>
+            )}
 
             <div className="h-6 w-px bg-white/10 hidden md:block" />
 
@@ -143,9 +145,9 @@ function App() {
             </a>
 
             {/* Language Toggle */}
-            <button onClick={toggleLanguage} className="flex items-center gap-2 pl-3 pr-4 py-2 bg-white/5 border border-white/5 rounded-full hover:bg-white/10 transition-colors text-slate-300 group relative" aria-label={t('tooltip_language')}>
+            <button onClick={toggleLanguage} className="flex items-center gap-2 p-2.5 sm:pl-3 sm:pr-4 sm:py-2 bg-white/5 border border-white/5 rounded-full hover:bg-white/10 transition-colors text-slate-300 group relative" aria-label={t('tooltip_language')}>
               <Globe size={18} />
-              <span className="text-xs font-bold tracking-wider">{i18n.language.toUpperCase()}</span>
+              <span className="hidden sm:block text-xs font-bold tracking-wider">{i18n.language.toUpperCase()}</span>
               <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 pointer-events-none z-50">
                 {t('tooltip_language')}
               </div>
