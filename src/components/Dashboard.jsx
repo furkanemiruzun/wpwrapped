@@ -70,11 +70,22 @@ export default function Dashboard({ stats }) {
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentPersonaIndex}
-                                    initial={{ opacity: 0, x: 20 }}
+                                    initial={{ opacity: 0, x: 50 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="h-full"
+                                    exit={{ opacity: 0, x: -50 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className="h-full touch-pan-y"
+                                    drag="x"
+                                    dragConstraints={{ left: 0, right: 0 }}
+                                    dragElastic={0.2}
+                                    onDragEnd={(e, { offset, velocity }) => {
+                                        const swipe = offset.x;
+                                        if (swipe < -50) {
+                                            nextPersona();
+                                        } else if (swipe > 50) {
+                                            prevPersona();
+                                        }
+                                    }}
                                 >
                                     <PersonaCard
                                         user={personas[currentPersonaIndex][0]}
