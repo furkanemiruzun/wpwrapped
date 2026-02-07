@@ -1,0 +1,10 @@
+[21.01.2024 15:33:12] Alice: Hello!
+[21.01.2024 15:34:05] Bob: Hi Alice! 😂
+[21.01.2024 15:35:10] Alice: How are you?
+[21.01.2024 15:36:00] Bob: I am fine, just testing this app.
+[22.01.2024 10:00:00] Alice: Good morning! ☀️
+[22.01.2024 10:05:00] Bob: Morning!
+[23.01.2024 23:30:00] Alice: Late night talk? 🦉
+[23.01.2024 23:35:00] Bob: Yes, I'm a night owl.
+[24.01.2024 08:00:00] Alice: Early bird catches the worm! ☀️
+[24.01.2024 08:05:00] Bob: ⚡
